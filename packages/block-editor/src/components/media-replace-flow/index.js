@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { uniqueId } from 'lodash';
+import { uniqueId, debounce } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -66,8 +66,13 @@ const MediaReplaceFlow = ( {
 	};
 
 	const onError = ( message ) => {
-		createNotice( 'error', renderToString( message ), {
-			speak: true,
+		const renderMsg = renderToString( message );
+		const speakMsg = debounce(
+			() => speak( renderToString( message ) ),
+			5000
+		);
+		speakMsg();
+		createNotice( 'error', renderMsg, {
 			id: errorNoticeID,
 			isDismissible: true,
 			__unstableHTML: true,
